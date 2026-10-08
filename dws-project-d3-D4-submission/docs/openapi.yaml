@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: ROSCA Financial Management System API
+  description: REST API and Baseline Security implementation for Track A (Deliverable 4).
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /members:
+    post:
+      summary: Register a new member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, email, phone]
+              properties:
+                full_name: { type: string, example: "Alice Smith" }
+                email: { type: string, example: "alice@example.com" }
+                phone: { type: string, example: "555-0101" }
+      responses:
+        '201': { description: Member registered }
+        '400': { description: Validation error }
+        '409': { description: Email conflict }
+    get:
+      summary: Get all members
+      responses:
+        '200': { description: List of members }
+  /members/{id}:
+    get:
+      summary: Get member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Member details }
+        '404': { description: Member not found }
+  /circles:
+    post:
+      summary: Create circle
+      responses:
+        '201': { description: Circle created }
+    get:
+      summary: List circles
+      responses:
+        '200': { description: List of circles }
+  /contributions:
+    post:
+      summary: Record contribution
+      responses:
+        '201': { description: Contribution recorded }
+  /payouts:
+    post:
+      summary: Disburse payout
+      responses:
+        '201': { description: Payout disbursed }
+        '409': { description: Cycle payout already disbursed }
