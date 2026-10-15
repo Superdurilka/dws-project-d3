@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: rosca_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: rosca_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./backend/seed.sql:/docker-entrypoint-initdb.d/2_seed.sql
+
+  backend:
+    build: ./backend
+    container_name: rosca_backend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_USER: postgres
+      DB_HOST: postgres
+      DB_NAME: rosca_db
+      DB_PASSWORD: postgrespassword
+      DB_PORT: 5432
+      PORT: 3000
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: rosca_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
